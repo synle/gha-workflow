@@ -1,0 +1,49 @@
+name: Common Build and Commit
+
+on:
+  workflow_call:
+    inputs:
+      node-version:
+        type: string
+        required: false
+        default: '24.x'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    # Added permissions block to ensure the action has rights to push code
+    permissions:
+      contents: write
+      
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          # Use head_ref for PRs, otherwise falls back to default branch
+          ref: ${{ github.head_ref || github.ref_name }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ inputs.node-version }}
+          registry-url: https://registry.npmjs.org/
+
+      - name: Build and Format
+        run: |
+          sh build.sh
+          sh format.sh
+        env:
+          is_os_darwin_mac: 0
+          is_os_window: 0
+          is_os_wsl: 0
+          is_os_ubuntu: 1
+          is_os_chromeos: 0
+          is_os_mingw64: 0
+          is_os_android_termux: 0
+
+      - name: Commit Changes
+        uses: EndBug/add-and-commit@v9
+        with:
+          message: 'CI / CD - Prettier Automatic Commit'
+          # Optional: ensures the commit is attributed to the GHA bot
+          default_author: github_actions
