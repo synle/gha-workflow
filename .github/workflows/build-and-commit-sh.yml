@@ -11,16 +11,14 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    # Added permissions block to ensure the action has rights to push code
     permissions:
-      contents: write
+      contents: write  # Added permissions block to ensure the action has rights to push code
       
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
         with:
-          # Use head_ref for PRs, otherwise falls back to default branch
-          ref: ${{ github.head_ref || github.ref_name }}
+          ref: ${{ github.head_ref || github.ref_name }}  # Use head_ref for PRs, otherwise falls back to default branch
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -44,5 +42,4 @@ jobs:
         uses: EndBug/add-and-commit@v9
         with:
           message: 'CI / CD - Prettier Automatic Commit'
-          # Optional: ensures the commit is attributed to the GHA bot
-          default_author: github_actions
+          default_author: github_actions  # Optional: ensures the commit is attributed to the GHA bot
