@@ -28,7 +28,7 @@ jobs:
           node-version: ${{ inputs.node-version }}
           registry-url: https://registry.npmjs.org/
 
-      - name: Build and Format
+      - name: Build with build.sh
         run: |
           sh build.sh
         env:
