@@ -26,15 +26,15 @@ jobs:
           node-version: ${{ inputs.node-version }}
           registry-url: https://registry.npmjs.org/
 
-      # - name: Install Dependencies
-      #   run: |
-      #     if [ -f package-lock.json ]; then
-      #       npm ci
-      #     elif [ -f package.json ]; then
-      #       npm install
-      #     else
-      #       echo "No package.json found, skipping install."
-      #     fi
+      - name: Install Dependencies
+        run: |
+          if [ -f package-lock.json ]; then
+            npm ci
+          elif [ -f package.json ]; then
+            npm install
+          else
+            echo "No package.json found, skipping install."
+          fi
 
       - name: Build with build.sh
         run: |
