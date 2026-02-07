@@ -24,25 +24,28 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ inputs.node-version }}
-          registry-url: https://registry.npmjs.org/
+          cache: 'npm'
 
       - name: Install Dependencies
         continue-on-error: true
         run: |
           if [ -f package-lock.json ]; then
+            echo ">>>>>>   Running npm ci <<<<<<<"
             npm ci
           elif [ -f package.json ]; then
+            echo ">>>>>>   Running npm install <<<<<<<"
             npm install
           else
+            echo ">>>>>>   Running npm install FAILED <<<<<<<"
             echo "No package.json found, skipping install."
           fi
 
       - name: Build with build.sh
         run: |
           # Only run if files exist to avoid errors
-          [ -f build.sh ] && echo ">>>> Running build.sh..." && sh build.sh || true
-          [ -f test.sh ] && echo ">>>> Running test.sh..." && sh test.sh || true
-          [ -f format.sh ] && echo ">>>> Running format.sh..." && sh format.sh || true
+          [ -f build.sh ] && echo ">>>>>>   Running build.sh <<<<<<<" && sh build.sh || true
+          [ -f test.sh ] && echo ">>>>>>   Running test.sh <<<<<<<" && sh test.sh || true
+          [ -f format.sh ] && echo ">>>>>>   Running format.sh <<<<<<<" && sh format.sh || true
         env:
           is_os_darwin_mac: 0
           is_os_window: 0
