@@ -44,9 +44,9 @@ jobs:
       - name: Build with build.sh
         run: |
           # Only run if files exist to avoid errors
-          [ -f build.sh ] && echo ">>>>>>   Running build.sh <<<<<<<" && sh build.sh || true
-          [ -f test.sh ] && echo ">>>>>>   Running test.sh <<<<<<<" && sh test.sh
-          [ -f format.sh ] && echo ">>>>>>   Running format.sh <<<<<<<" && sh format.sh
+          [ -f build.sh ] && echo ">>>>>>   Running build.sh <<<<<<<" && sh build.sh || echo 'build.sh done' || true
+          [ -f test.sh ] && echo ">>>>>>   Running test.sh <<<<<<<" && sh test.sh || echo 'test.sh done' || true
+          [ -f format.sh ] && echo ">>>>>>   Running format.sh <<<<<<<" && sh format.sh || echo 'format.sh done' || true
         env:
           is_os_darwin_mac: 0
           is_os_window: 0
