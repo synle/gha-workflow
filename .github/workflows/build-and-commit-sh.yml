@@ -1,4 +1,4 @@
-name: Common Build and Commit
+name: Common Build and Commit with NodeJS and Build.sh
 
 on:
   workflow_call:
@@ -7,10 +7,6 @@ on:
         type: string
         required: false
         default: '24.x'
-      bypass-build-error:
-        type: boolean
-        required: false
-        default: true
 
 jobs:
   build:
@@ -26,14 +22,14 @@ jobs:
           ref: ${{ github.head_ref || github.ref_name }}
 
       - name: Setup Node.js
+        continue-on-error: true
         uses: actions/setup-node@v4
         with:
           node-version: ${{ inputs.node-version }}
           cache: ${{ hashFiles('package-lock.json') != '' && 'npm' || '' }}
 
       - name: Install Dependencies
-        # Using the same bypass logic here as well for consistency
-        continue-on-error: ${{ inputs.bypass-build-error }}
+        continue-on-error: true  # Always continue so minor npm warnings don't kill the flow
         run: |
           if [ -f package-lock.json ]; then
             echo ">>>>>>   Running npm ci <<<<<<<"
@@ -46,8 +42,6 @@ jobs:
           fi
 
       - name: Build with build.sh
-        # This is the key fix: it evaluates the input to decide whether to ignore errors
-        continue-on-error: ${{ inputs.bypass-build-error }}
         run: |
           if [ -f build.sh ]; then
             echo ">>>>>> Running build.sh <<<<<<<"
