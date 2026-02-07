@@ -27,6 +27,7 @@ jobs:
           registry-url: https://registry.npmjs.org/
 
       - name: Install Dependencies
+        continue-on-error: true
         run: |
           if [ -f package-lock.json ]; then
             npm ci
