@@ -10,6 +10,7 @@ on:
 
 jobs:
   build:
+    name: Setup Node, Install npm packages and Run build.sh
     runs-on: ubuntu-latest
     permissions:
       contents: write  # Added permissions block to ensure the action has rights to push code
