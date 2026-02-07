@@ -49,9 +49,20 @@ jobs:
         # This is the key fix: it evaluates the input to decide whether to ignore errors
         continue-on-error: ${{ inputs.bypass-build-error }}
         run: |
-          [ -f build.sh ] && echo ">>>>>>   Running build.sh <<<<<<<" && sh build.sh
-          [ -f test.sh ] && echo ">>>>>>   Running test.sh <<<<<<<" && sh test.sh
-          [ -f format.sh ] && echo ">>>>>>   Running format.sh <<<<<<<" && sh format.sh
+          if [ -f build.sh ]; then
+            echo ">>>>>> Running build.sh <<<<<<<"
+            sh build.sh
+          fi
+          
+          if [ -f test.sh ]; then
+            echo ">>>>>> Running test.sh <<<<<<<"
+            sh test.sh
+          fi
+          
+          if [ -f format.sh ]; then
+            echo ">>>>>> Running format.sh <<<<<<<"
+            sh format.sh
+          fi
         env:
           is_os_darwin_mac: 0
           is_os_window: 0
