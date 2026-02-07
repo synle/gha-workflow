@@ -3,10 +3,8 @@ on:
     inputs:
       node-version:
         type: string
+        required: false
         default: '24.x'
-      is_os_ubuntu:
-        type: string
-        default: '1'
 
 jobs:
   build:
