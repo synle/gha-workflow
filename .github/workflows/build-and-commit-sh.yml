@@ -1,4 +1,4 @@
-name: Common Build and Commit
+name: Common Build and Commit  # Example: https://github.com/synle/bashrc/blob/master/.github/workflows/build-main.yml
 
 on:
   workflow_call:
