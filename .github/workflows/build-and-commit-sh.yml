@@ -25,10 +25,24 @@ jobs:
         with:
           node-version: ${{ inputs.node-version }}
           registry-url: https://registry.npmjs.org/
+          cache: 'npm' # Speeds up future runs by caching node_modules
+
+      - name: Install Dependencies
+        run: |
+          if [ -f package-lock.json ]; then
+            npm ci
+          elif [ -f package.json ]; then
+            npm install
+          else
+            echo "No package.json found, skipping install."
+          fi
 
       - name: Build with build.sh
         run: |
-          sh build.sh
+          # Only run if files exist to avoid errors
+          [ -f build.sh ] && sh build.sh
+          [ -f test.sh ] && sh test.sh
+          [ -f format.sh ] && sh format.sh
         env:
           is_os_darwin_mac: 0
           is_os_window: 0
