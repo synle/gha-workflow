@@ -1,4 +1,5 @@
 #! /bin/sh
+# curl -s https://raw.githubusercontent.com/synle/gha-workflow/refs/heads/main/format.sh | bash -
 echo '>> Formatting Plain Text (md txt sh ps1 config...)'
 PATTERNS=(
   "*.md"
