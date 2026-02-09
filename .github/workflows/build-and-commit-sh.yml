@@ -14,6 +14,15 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+
+    env:
+      is_os_darwin_mac: 0
+      is_os_window: 0
+      is_os_wsl: 0
+      is_os_ubuntu: 1
+      is_os_chromeos: 0
+      is_os_mingw64: 0
+      is_os_android_termux: 0
       
     steps:
       - name: Checkout Code
@@ -52,59 +61,12 @@ jobs:
             echo ">>>>>> Running test.sh <<<<<<<"
             sh test.sh
           fi
-        env:
-          is_os_darwin_mac: 0
-          is_os_window: 0
-          is_os_wsl: 0
-          is_os_ubuntu: 1
-          is_os_chromeos: 0
-          is_os_mingw64: 0
-          is_os_android_termux: 0
 
       - name: Format Plain Text and JS
         continue-on-error: true
         run: |
-          echo '>> Formatting Plain Text (md txt sh ps1 config...)'
-          
-          # Define patterns
-          PATTERNS=(
-            "*.md"
-            "*.txt"
-            "*.sh"
-            "*.ps1"
-            "*.config"
-            ".gitignore"
-            ".prettierignore"
-          )
-
-          # Build the find arguments
-          name_args=()
-          for i in "${!PATTERNS[@]}"; do
-              name_args+=("-name" "${PATTERNS[$i]}")
-              if [ $i -lt $((${#PATTERNS[@]} - 1)) ]; then
-                  name_args+=("-o")
-              fi
-          done
-
-          # Find and trim trailing whitespace
-          find . -type d \( -path "./node_modules" -o -name ".git" \) -prune -o -type f \( "${name_args[@]}" \) -print | while read -r file; do
-              echo "$(readlink -f "$file")"
-              sed -i 's/[ \t]*$//' "$file"
-          done
-          
-          echo '>> DONE Formatting Plain Text (md txt sh ps1 config...)'
-
-          echo '>> Formatting JS Scripts'
-          npm run format || echo "npm format failed but continuing..."
-          echo '>> DONE Formatting JS Scripts'
-        env:
-          is_os_darwin_mac: 0
-          is_os_window: 0
-          is_os_wsl: 0
-          is_os_ubuntu: 1
-          is_os_chromeos: 0
-          is_os_mingw64: 0
-          is_os_android_termux: 0
+          echo ">>>>>> Running format.sh <<<<<<<"
+          curl -s https://raw.githubusercontent.com/synle/gha-workflow/refs/heads/main/format.sh | bash -
 
       - name: Commit Changes
         uses: EndBug/add-and-commit@v9
