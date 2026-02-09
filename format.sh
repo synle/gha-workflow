@@ -1,39 +1,64 @@
 #! /bin/sh
 # curl -s https://raw.githubusercontent.com/synle/gha-workflow/refs/heads/main/format.sh | bash -
-echo '>> Formatting Plain Text (md txt sh ps1 config...)'
-PATTERNS=(
-  "*.md"
-  "*.txt"
-  "*.sh"
-  "*.ps1"
-  "*.config"
-  ".gitignore"
-  ".prettierignore"
+echo '>> Formatting All Text-Based Files...'
+
+# Configuration: Add folders or files you want to skip
+EXCLUDE_DIRS=(
+    ".git" 
+    "node_modules" 
+    "dist" 
+    "build" 
+    "vendor" 
+    ".cache" 
+    ".next" 
+    "venv" 
+    ".venv" 
+    "target" # Common for Rust/Java
 )
 
-# Build the find arguments for file extensions
-name_args=()
-for i in "${!PATTERNS[@]}"; do
-    name_args+=("-name" "${PATTERNS[$i]}")
-    if [ $i -lt $((${#PATTERNS[@]} - 1)) ]; then
-        name_args+=("-o")
+EXCLUDE_FILES=(
+    "package-lock.json"
+    "yarn.lock"
+    "pnpm-lock.yaml"
+    "*.min.js"
+    "*.min.css"
+    ".DS_Store"
+)
+
+# Build the directory prune arguments
+dir_args=()
+for i in "${!EXCLUDE_DIRS[@]}"; do
+    dir_args+=("-name" "${EXCLUDE_DIRS[$i]}")
+    if [ $i -lt $((${#EXCLUDE_DIRS[@]} - 1)) ]; then
+        dir_args+=("-o")
+    fi
+done
+
+# Build the file exclusion arguments
+file_exclude_args=()
+for i in "${!EXCLUDE_FILES[@]}"; do
+    file_exclude_args+=("-name" "${EXCLUDE_FILES[$i]}")
+    if [ $i -lt $((${#EXCLUDE_FILES[@]} - 1)) ]; then
+        file_exclude_args+=("-o")
     fi
 done
 
 # find .
-# -type d \( -path "./node_modules" -o -name ".git" \) -prune : Skips these directories entirely
-# -type f \( "${name_args[@]}" \) : Looks for your specific file patterns
-find . -type d \( -path "./node_modules" -o -name ".git" \) -prune -o -type f \( "${name_args[@]}" \) -print | while read -r file; do
+# 1. Prune the excluded directories
+# 2. Filter out specific excluded files
+# 3. Check MIME type for text files
+find . -type d \( "${dir_args[@]}" \) -prune -o -type f ! \( "${file_exclude_args[@]}" \) -print | while read -r file; do
 
-    # Print the absolute path
-    echo "$(readlink -f "$file")"
-
-    # Removes trailing spaces and tabs only.
-    # Does NOT delete empty lines or modify leading indentation.
-    sed -i 's/[ \t]*$//' "$file"
+    if file --mime-type "$file" | grep -q "text/"; then
+        echo "Formatting: $(readlink -f "$file")"
+        
+        # Removes trailing whitespace
+        sed -i 's/[ \t]*$//' "$file"
+    fi
 
 done
-echo '>> DONE Formatting Plain Text (md txt sh ps1 config...)'
+
+echo '>> DONE Formatting All Text-Based Files'
 
 
 echo '>> Formatting JS Scripts'
